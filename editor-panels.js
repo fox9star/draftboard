@@ -121,7 +121,7 @@
     const frames = Ed.slideFrames();
     const kindSlides = s.doc.kind === 'slides';
     const head = `<div class="slides-head">
-      <button class="btn small" data-action="addSlideMenu" data-dd-owner>${I.plus} ${kindSlides ? '새 슬라이드' : '새 프레임'}</button>
+      <button class="btn small" data-action="addSlideMenu" data-dd-owner title="${kindSlides ? '레이아웃을 골라 추가 (슬라이드를 선택하고 Enter를 눌러도 추가됩니다)' : '레이아웃을 골라 추가'}">${I.plus} ${kindSlides ? '새 슬라이드' : '새 프레임'}</button>
       <button class="btn small" data-action="${kindSlides ? 'slideshow' : 'present'}" title="${kindSlides ? '슬라이드 쇼' : '프레젠테이션'}">${I.play} 재생</button>
     </div>`;
     if (!frames.length) {
@@ -272,7 +272,7 @@
     const tips = {
       design: ['<kbd>F</kbd> 프레임 · <kbd>R</kbd> 사각형 · <kbd>T</kbd> 텍스트', '<kbd>P</kbd> 펜으로 곡선을 그리고 더블클릭해 점을 편집', '레이어를 선택하고 오른쪽 <b>프로토타입</b> 탭에서 화면을 연결', '<kbd>Alt</kbd>를 누른 채 다른 레이어를 가리키면 간격 측정'],
       whiteboard: ['<kbd>S</kbd> 스티커 메모 · <kbd>X</kbd> 연결선 · <kbd>E</kbd> 스탬프', '<kbd>M</kbd> 형광펜 · <kbd>Shift</kbd>+<kbd>P</kbd> 연필', '도형이나 메모를 더블클릭해 글자 입력', '연결선을 도형에서 도형으로 끌면 서로 붙습니다'],
-      slides: ['왼쪽 <b>슬라이드</b> 탭에서 순서를 끌어 바꾸기', '프레임을 선택하고 프로토타입 탭에서 전환 효과 지정', '슬라이드 쇼에서 <kbd>N</kbd> 키로 발표자 노트'],
+      slides: ['슬라이드를 선택하고 <kbd>Enter</kbd>를 누르면 다음 슬라이드 추가, <kbd>Ctrl</kbd>+<kbd>D</kbd>는 복제', '왼쪽 <b>슬라이드</b> 탭에서 순서를 끌어 바꾸기', '프레임을 선택하고 프로토타입 탭에서 전환 효과 지정', '슬라이드 쇼에서 <kbd>N</kbd> 키로 발표자 노트'],
       site: ['프레임을 선택하고 디자인 탭 <b>사이트</b>에서 페이지 이름과 화면 크기 지정', '같은 페이지 이름의 데스크톱·태블릿·모바일 프레임이 반응형으로 묶입니다', '프로토타입 탭의 링크가 사이트 메뉴 링크가 됩니다'],
       buzz: ['템플릿 프레임의 텍스트·이미지 레이어 이름을 CSV 열 이름과 같게 맞추세요', '<b>대량 제작</b>에서 데이터를 붙여 넣고 한 번에 생성'],
       motion: ['레이어를 선택하고 <b>모션</b> 탭에서 효과·지연·길이 지정', '타임라인에서 순서를 확인하고 동영상(WebM)으로 내보내기'],

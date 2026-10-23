@@ -853,6 +853,27 @@
     const sel = Ed.selNodes();
     if (!sel.length) return;
     Ed.checkpoint();
+    const tops = Ed.topFrames();
+    if (sel.every(n => tops.includes(n))) {
+      // Copies of whole screens or slides go to the right of the others instead of on top,
+      // and each copy comes right after its original in the slide order.
+      const gap = s.doc.kind === 'slides' ? 160 : 100;
+      let x = Math.max(...tops.map(f => f.x + f.w)) + gap;
+      const order = Ed.slideFrames().map(f => f.id);
+      const frames = [];
+      for (const f of sel) {
+        const copies = Ed.cloneSet(Ed.withChildren([f]), x - f.x, 0);
+        nodesNow().push(...copies);
+        order.splice(order.indexOf(f.id) + 1, 0, copies[0].id);
+        frames.push(copies[0]);
+        x += f.w + gap;
+      }
+      s.doc.slideOrder = order;
+      s.selection = frames.map(f => f.id);
+      Ed.changed();
+      if (s.doc.kind === 'slides' && frames.length === 1) Ed.zoomFit(frames);
+      return;
+    }
     const list = Ed.withChildren(sel);
     const copies = Ed.cloneSet(list, 10, 10);
     insertAbove(list, copies);
@@ -1282,6 +1303,11 @@
       case 'ArrowDown': e.preventDefault(); return nudge(0, step);
       case 'Enter': {
         const sel = Ed.selNodes();
+        // In a slide deck, Enter on a slide (or on nothing) adds the next slide.
+        if (s.doc.kind === 'slides' && (!sel.length || (sel.length === 1 && Ed.slideFrames().includes(sel[0])))) {
+          e.preventDefault();
+          return Ed.run('addSlide');
+        }
         if (sel.length === 1) { e.preventDefault(); editNode(sel[0]); }
         return;
       }
