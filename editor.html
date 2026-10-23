@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Draftboard</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header id="topbar">
+    <div class="tb-left">
+      <button id="menu-btn" class="tb-btn logo" title="메뉴" data-dd-owner>
+        <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="3" width="8" height="8" rx="2" fill="#7B61FF"/><rect x="13" y="3" width="8" height="8" rx="4" fill="#2EC4B6"/><rect x="3" y="13" width="8" height="8" rx="4" fill="#FF9F1C"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#E71D36"/></svg>
+        <svg viewBox="0 0 8 8" width="8" height="8"><path d="M1 3l3 3 3-3" stroke="currentColor" fill="none"/></svg>
+      </button>
+      <div id="tools" class="tools"></div>
+    </div>
+    <div class="tb-center">
+      <span id="kind-badge" class="kind-badge"></span>
+      <input id="doc-name" spellcheck="false" autocomplete="off" title="파일 이름">
+      <span id="save-state" class="save-state"></span>
+    </div>
+    <div class="tb-right">
+      <button id="timer" class="timer-chip" hidden title="클릭하면 타이머를 끕니다"></button>
+      <button id="undo-btn" class="tb-btn" title="실행 취소 (Ctrl+Z)"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M5 3L2 6l3 3M2 6h8a4 4 0 010 8H7" stroke="currentColor" fill="none" stroke-width="1.3"/></svg></button>
+      <button id="redo-btn" class="tb-btn" title="다시 실행 (Ctrl+Shift+Z)"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M11 3l3 3-3 3M14 6H6a4 4 0 000 8h3" stroke="currentColor" fill="none" stroke-width="1.3"/></svg></button>
+      <button id="zoom-btn" class="tb-btn zoom" data-dd-owner title="확대/축소">100%</button>
+      <div class="split">
+        <button id="play-btn" class="tb-btn" title="재생 (Ctrl+Alt+Enter)"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M5 3l8 5-8 5z" fill="currentColor"/></svg></button>
+        <button id="play-caret" class="tb-btn caret" data-dd-owner title="재생 방법"><svg viewBox="0 0 8 8" width="8" height="8"><path d="M1 3l3 3 3-3" stroke="currentColor" fill="none"/></svg></button>
+      </div>
+      <button id="export-btn" class="tb-primary" data-dd-owner>내보내기</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <aside id="left" class="panel">
+      <div class="tabs" id="left-tabs"></div>
+      <div id="left-body" class="panel-body"></div>
+    </aside>
+    <section id="stage" data-tool="select">
+      <svg id="canvas" xmlns="http://www.w3.org/2000/svg">
+        <g id="world"></g>
+        <g id="overlay"></g>
+      </svg>
+      <textarea id="text-editor" spellcheck="false"></textarea>
+      <div id="stamp-palette" class="stamp-palette" hidden></div>
+    </section>
+    <aside id="right" class="panel">
+      <div class="tabs" id="right-tabs"></div>
+      <div id="props" class="panel-body"></div>
+    </aside>
+  </main>
+
+  <div id="dropdown" class="dropdown" hidden></div>
+  <div id="toast" role="status"></div>
+  <input type="file" id="file-input" accept=".json,application/json" hidden>
+  <input type="file" id="image-input" accept="image/*" multiple hidden>
+  <div id="print-root"></div>
+
+  <script src="scene.js"></script>
+  <script src="motion.js"></script>
+  <script src="codegen.js"></script>
+  <script src="store.js"></script>
+  <script src="zip.js"></script>
+  <script src="editor-core.js"></script>
+  <script src="editor-input.js"></script>
+  <script src="editor-panels.js"></script>
+  <script src="editor-present.js"></script>
+  <script src="editor-extra.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>내 파일 – Draftboard</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" fill="#7B61FF"/><rect x="13" y="3" width="8" height="8" rx="4" fill="#2EC4B6"/><rect x="3" y="13" width="8" height="8" rx="4" fill="#FF9F1C"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#E71D36"/></svg>
+      Draftboard
+    </a>
+    <nav class="appnav" aria-label="도구">
+      <a href="files.html" class="on">파일</a>
+      <a href="make.html">AI 빌더</a>
+      <a href="weave.html">미디어 플로</a>
+    </nav>
+    <div class="spacer"></div>
+    <input id="search" class="search" type="search" placeholder="파일 이름 검색" aria-label="파일 검색">
+    <button id="import-btn" class="btn" title="JSON 파일 가져오기">가져오기</button>
+  </header>
+
+  <main class="files-main">
+    <section>
+      <h2 class="h2">새로 만들기</h2>
+      <div class="new-grid" id="new-grid"></div>
+    </section>
+    <section>
+      <div class="row-head">
+        <h2 class="h2">내 파일</h2>
+        <div class="filters" id="filters"></div>
+      </div>
+      <div class="file-grid" id="file-grid"></div>
+    </section>
+    <p class="storage" id="storage"></p>
+  </main>
+
+  <div id="dropdown" class="dropdown" hidden></div>
+  <div id="toast" role="status"></div>
+  <input type="file" id="import-input" accept=".json,application/json" hidden>
+  <script src="store.js"></script>
+  <script src="files.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 빌더 – Draftboard</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="make-page">
+  <header class="appbar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" fill="#7B61FF"/><rect x="13" y="3" width="8" height="8" rx="4" fill="#2EC4B6"/><rect x="3" y="13" width="8" height="8" rx="4" fill="#FF9F1C"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#E71D36"/></svg>
+      Draftboard
+    </a>
+    <nav class="appnav" aria-label="도구">
+      <a href="files.html">파일</a>
+      <a href="make.html" class="on">AI 빌더</a>
+      <a href="weave.html">미디어 플로</a>
+    </nav>
+    <div class="spacer"></div>
+    <button class="btn sm" id="projects-btn" title="프로젝트 목록">프로젝트 ▾</button>
+    <button class="btn sm dark" id="new-btn">새 프로젝트</button>
+  </header>
+
+  <div class="make">
+    <section class="chat" aria-label="대화">
+      <div class="chat-head">
+        <span class="status-dot" id="status" title="로컬 AI 연결 상태"></span>
+        <select class="input" id="model" aria-label="AI 모델"><option>모델 확인 중…</option></select>
+        <button class="icon-btn" id="settings" title="AI 연결 설정">⚙</button>
+      </div>
+      <div class="log" id="log"></div>
+      <form class="composer" id="composer">
+        <textarea class="input" id="prompt" rows="3" placeholder="만들고 싶은 앱을 설명하세요. Enter로 보내고 Shift+Enter로 줄을 바꿉니다."></textarea>
+        <div class="row">
+          <button type="button" class="btn sm" id="import-design" title="Draftboard 파일의 프레임을 코드로 가져오기">디자인 가져오기</button>
+          <span class="spacer"></span>
+          <button type="button" class="btn sm" id="stop" hidden>중지</button>
+          <button type="submit" class="btn sm primary" id="send">보내기</button>
+        </div>
+      </form>
+    </section>
+    <section class="preview" aria-label="결과">
+      <div class="preview-bar">
+        <div class="seg" id="views"><button data-view="preview" class="on">미리보기</button><button data-view="code">코드</button></div>
+        <div class="seg" id="devices"><button data-device="desktop" class="on">데스크톱</button><button data-device="mobile">모바일</button></div>
+        <span class="spacer"></span>
+        <button class="btn sm" id="reload" title="미리보기 다시 실행">새로고침</button>
+        <button class="btn sm" id="open-tab">새 탭에서 열기</button>
+        <button class="btn sm" id="download">HTML 내려받기</button>
+      </div>
+      <div class="viewport" id="viewport">
+        <iframe id="frame" sandbox="allow-scripts allow-forms allow-modals allow-popups" title="앱 미리보기"></iframe>
+        <textarea class="code-edit" id="code" spellcheck="false" hidden aria-label="코드"></textarea>
+        <div class="empty-preview" id="empty"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="dropdown" class="dropdown" hidden></div>
+  <div id="toast" role="status"></div>
+  <script src="scene.js"></script>
+  <script src="motion.js"></script>
+  <script src="codegen.js"></script>
+  <script src="store.js"></script>
+  <script src="ai.js"></script>
+  <script src="make.js"></script>
+</body>
+</html>

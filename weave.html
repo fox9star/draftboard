@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>미디어 플로 – Draftboard</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="ui.css">
+</head>
+<body class="weave-page">
+  <header class="appbar">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2" fill="#7B61FF"/><rect x="13" y="3" width="8" height="8" rx="4" fill="#2EC4B6"/><rect x="3" y="13" width="8" height="8" rx="4" fill="#FF9F1C"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#E71D36"/></svg>
+      Draftboard
+    </a>
+    <nav class="appnav" aria-label="도구">
+      <a href="files.html">파일</a>
+      <a href="make.html">AI 빌더</a>
+      <a href="weave.html" class="on">미디어 플로</a>
+    </nav>
+    <div class="spacer"></div>
+    <span class="muted" id="run-status"></span>
+    <label class="muted" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="auto-run" checked> 바꾸면 자동 실행</label>
+    <button class="btn sm" id="example-btn">예제 불러오기</button>
+    <button class="btn sm" id="clear-btn">모두 지우기</button>
+    <button class="btn sm primary" id="run-btn">▶ 실행</button>
+  </header>
+
+  <div class="weave">
+    <aside class="palette" id="palette" aria-label="노드 목록"></aside>
+    <section class="graph" id="graph" aria-label="작업 흐름">
+      <div class="graph-inner" id="graph-inner"><svg class="wires" id="wires"></svg></div>
+    </section>
+    <aside class="inspector" id="inspector" aria-label="노드 설정"></aside>
+  </div>
+
+  <div id="toast" role="status"></div>
+  <input type="file" id="media-input" hidden>
+  <script src="scene.js"></script>
+  <script src="store.js"></script>
+  <script src="ai.js"></script>
+  <script src="weave.js"></script>
+</body>
+</html>
