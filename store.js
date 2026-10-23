@@ -162,6 +162,40 @@ window.Store = (() => {
     return JSON.stringify({ format: 'draftboard', version: 2, meta: { name: f.meta.name, kind: f.meta.kind }, doc: f.doc, assets: Object.fromEntries(f.assets) });
   }
 
+  // Every file in one object, for backups and for moving files between addresses
+  async function exportAll() {
+    const files = [];
+    for (const m of await list()) {
+      const f = await loadFile(m.id);
+      if (f) files.push({ meta: f.meta, doc: f.doc, assets: Object.fromEntries(f.assets) });
+    }
+    return { format: 'draftboard-backup', version: 1, exportedAt: Date.now(), files };
+  }
+
+  // Adds files keeping their ids, so bringing the same files over twice updates them
+  // instead of making copies. A copy that is newer than the incoming one is kept.
+  async function importFiles(files) {
+    let added = 0, updated = 0, skipped = 0;
+    for (const f of files || []) {
+      if (!f || !f.meta || !f.meta.id || !f.doc || !Array.isArray(f.doc.nodes)) continue;
+      const cur = await getMeta(f.meta.id);
+      if (cur && cur.updatedAt > f.meta.updatedAt) { skipped++; continue; }
+      await saveFile(f.meta, f.doc, Object.entries(f.assets || {}));
+      if (cur) updated++; else added++;
+    }
+    return { added, updated, skipped };
+  }
+
+  // A single exported file is added as a new copy; a backup restores all of its files.
+  async function importText(text) {
+    let data;
+    try { data = JSON.parse(text); } catch (e) { throw new Error('JSON 파일을 읽지 못했습니다.'); }
+    if (data && data.format === 'draftboard-backup' && Array.isArray(data.files)) {
+      return { backup: true, ...(await importFiles(data.files)) };
+    }
+    return { backup: false, meta: await importJSON(text) };
+  }
+
   async function duplicate(id) {
     const f = await loadFile(id);
     if (!f) throw new Error('파일을 찾을 수 없습니다.');
@@ -198,6 +232,6 @@ window.Store = (() => {
 
   return {
     newId, saveFile, loadFile, list, getMeta, putMeta, remove, removeAssets,
-    kvGet, kvSet, getAll, get, put, del, importJSON, exportJSON, duplicate, migrateLegacy, usage,
+    kvGet, kvSet, getAll, get, put, del, importJSON, importText, importFiles, exportAll, exportJSON, duplicate, migrateLegacy, usage,
   };
 })();

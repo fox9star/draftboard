@@ -204,8 +204,8 @@
       input.value = '';
       if (!f) return;
       try {
-        const meta = await Store.importJSON(await f.text());
-        location.href = `editor.html?file=${meta.id}`;
+        const r = await Store.importText(await f.text());
+        location.href = r.backup ? 'files.html' : `editor.html?file=${r.meta.id}`;
       } catch (e) { Ed.toast(e.message); }
     };
     input.click();

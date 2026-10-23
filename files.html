@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>내 파일 – Draftboard</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <script src="theme.js"></script>
-  <link rel="stylesheet" href="ui.css">
+  <script src="theme.js?v=20261024"></script>
+  <link rel="stylesheet" href="ui.css?v=20261024">
 </head>
 <body>
   <header class="appbar">
@@ -22,7 +22,9 @@
     <div class="spacer"></div>
     <div class="compact" data-theme-switch></div>
     <input id="search" class="search" type="search" placeholder="파일 이름 검색" aria-label="파일 검색">
-    <button id="import-btn" class="btn" title="JSON 파일 가져오기">가져오기</button>
+    <button id="pull-btn" class="btn primary" hidden title="이 PC의 로컬 서버(127.0.0.1:8080)에서 만든 파일을 가져옵니다">이 PC 파일 가져오기</button>
+    <button id="backup-btn" class="btn" title="모든 파일을 백업 파일 하나로 내려받기">백업</button>
+    <button id="import-btn" class="btn" title="파일(JSON)이나 백업 파일 가져오기">가져오기</button>
   </header>
 
   <main class="files-main">
@@ -43,7 +45,7 @@
   <div id="dropdown" class="dropdown" hidden></div>
   <div id="toast" role="status"></div>
   <input type="file" id="import-input" accept=".json,application/json" hidden>
-  <script src="store.js"></script>
-  <script src="files.js"></script>
+  <script src="store.js?v=20261024"></script>
+  <script src="files.js?v=20261024"></script>
 </body>
 </html>

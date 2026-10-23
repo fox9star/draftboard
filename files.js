@@ -190,27 +190,102 @@
   });
   $('#search').addEventListener('input', e => { query = e.target.value; renderFiles(); });
 
+  const summary = r => `새 파일 ${r.added}개, 갱신 ${r.updated}개${r.skipped ? `, 이곳이 더 최신이라 건너뜀 ${r.skipped}개` : ''}`;
+
+  async function importFile(f) {
+    const r = await Store.importText(await f.text());
+    toast(r.backup ? `백업을 가져왔습니다: ${summary(r)}` : `‘${r.meta.name}’을(를) 가져왔습니다.`);
+  }
+
   const importInput = $('#import-input');
   $('#import-btn').addEventListener('click', () => importInput.click());
   importInput.addEventListener('change', async () => {
     const f = importInput.files[0];
     importInput.value = '';
     if (!f) return;
-    try {
-      const meta = await Store.importJSON(await f.text());
-      toast(`‘${meta.name}’을(를) 가져왔습니다.`);
-      refresh();
-    } catch (err) { toast(err.message); }
+    try { await importFile(f); } catch (err) { toast(err.message); }
+    refresh();
   });
   document.addEventListener('dragover', e => { if (e.dataTransfer.types.includes('Files')) e.preventDefault(); });
   document.addEventListener('drop', async e => {
     e.preventDefault();
     for (const f of e.dataTransfer.files) {
       if (!/\.json$/i.test(f.name)) continue;
-      try { await Store.importJSON(await f.text()); } catch (err) { toast(err.message); }
+      try { await importFile(f); } catch (err) { toast(err.message); }
     }
     refresh();
   });
+
+  $('#backup-btn').addEventListener('click', async () => {
+    const data = await Store.exportAll();
+    if (!data.files.length) return toast('백업할 파일이 없습니다.');
+    const day = new Date().toISOString().slice(0, 10);
+    download(new Blob([JSON.stringify(data)], { type: 'application/json' }), `draftboard-backup-${day}.json`);
+    toast(`파일 ${data.files.length}개를 백업했습니다. 다른 주소의 ‘가져오기’로 한 번에 복원할 수 있습니다.`);
+  });
+
+  // ---------- moving files from the local server to this address ----------
+  // Files live in each address's own browser storage. The local page sends them over
+  // with postMessage, and only after the person confirms in that window.
+  const LOCAL_ORIGIN = 'http://127.0.0.1:8080';
+  const pullBtn = $('#pull-btn');
+  pullBtn.hidden = location.origin === LOCAL_ORIGIN;
+  pullBtn.addEventListener('click', () => {
+    const w = window.open(`${LOCAL_ORIGIN}/files.html?transfer=${encodeURIComponent(location.origin)}`, 'draftboard-transfer', 'width=560,height=660');
+    if (!w) return toast('팝업이 차단되었습니다. 주소창에서 이 사이트의 팝업을 허용해 주세요.');
+    toast('새 창에서 ‘보내기’를 누르세요. 창이 열리지 않으면 로컬 서버(127.0.0.1:8080)가 실행 중인지 확인하세요.');
+    const onMessage = async e => {
+      if (e.origin !== LOCAL_ORIGIN || !e.data || e.data.type !== 'draftboard-transfer') return;
+      window.removeEventListener('message', onMessage);
+      try {
+        const r = await Store.importFiles(e.data.files);
+        toast(`이 PC의 파일을 가져왔습니다: ${summary(r)}`);
+        if (e.source) e.source.postMessage({ type: 'draftboard-transfer-done', ...r }, LOCAL_ORIGIN);
+      } catch (err) { toast('가져오지 못했습니다: ' + err.message); }
+      refresh();
+    };
+    window.addEventListener('message', onMessage);
+  });
+
+  function transferDialog(target) {
+    let origin;
+    try { origin = new URL(target).origin; } catch (e) { return; }
+    if (!window.opener || origin === location.origin) return;
+    const root = document.createElement('div');
+    root.className = 'modal';
+    root.innerHTML = `<div class="modal-box"><div class="modal-head"><span>파일 보내기</span></div><div class="modal-body" id="tx-body">불러오는 중…</div></div>`;
+    document.body.appendChild(root);
+    const body = root.querySelector('#tx-body');
+    (async () => {
+      const metas = await Store.list();
+      if (!metas.length) {
+        body.innerHTML = '<p>이 주소에는 보낼 파일이 없습니다.</p><div style="display:flex;justify-content:flex-end"><button class="btn" data-tx="close">닫기</button></div>';
+        return;
+      }
+      body.innerHTML = `<p><b>${esc(origin)}</b> 에서 이 PC(${esc(location.origin)})의 Draftboard 파일 <b>${metas.length}개</b>를 가져가려고 합니다.</p>
+        <ul class="hint" style="max-height:200px;overflow:auto;margin:10px 0;padding-left:18px">${metas.map(m => `<li>${esc(m.name)}</li>`).join('')}</ul>
+        <p class="hint">직접 연 사이트가 맞을 때만 보내세요. 보낸 뒤에도 이 PC의 파일은 그대로 남습니다.</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn" data-tx="close">취소</button><button class="btn primary" data-tx="send">보내기</button></div>`;
+    })();
+    root.addEventListener('click', async e => {
+      const b = e.target.closest('[data-tx]');
+      if (!b) return;
+      if (b.dataset.tx === 'close') { window.close(); root.remove(); return; }
+      b.disabled = true;
+      b.textContent = '보내는 중…';
+      const data = await Store.exportAll();
+      window.addEventListener('message', ev => {
+        if (ev.origin !== origin || !ev.data || ev.data.type !== 'draftboard-transfer-done') return;
+        body.innerHTML = `<p>보냈습니다. ${esc(summary(ev.data))}</p><p class="hint">이 창은 닫아도 됩니다.</p>`;
+        setTimeout(() => window.close(), 1500);
+      });
+      window.opener.postMessage({ type: 'draftboard-transfer', files: data.files }, origin);
+      body.innerHTML = '<p>보내는 중입니다…</p>';
+    });
+  }
+
+  const transferTo = new URLSearchParams(location.search).get('transfer');
+  if (transferTo) transferDialog(transferTo);
 
   renderNew();
   (async () => {
