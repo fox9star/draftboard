@@ -215,7 +215,7 @@ textarea.input { height: auto; padding: 8px 10px; resize: vertical; line-height:
 @media (max-width: 860px) { .make { grid-template-columns: 1fr; grid-template-rows: 55% 45%; } .chat { border-right: 0; border-bottom: 1px solid var(--line); } }
 
 /* ---------- media flow ---------- */
-.weave-page { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+.weave-page { height: 100%; display: flex; flex-direction: column; overflow: hidden; --chat-right: 316px; }
 .weave { flex: 1; display: grid; grid-template-columns: 220px 1fr 300px; min-height: 0; }
 .palette { background: var(--panel); border-right: 1px solid var(--line); overflow-y: auto; padding: 10px; }
 .palette h4 { margin: 12px 4px 6px; font-size: 11px; color: var(--muted); font-weight: 600; }

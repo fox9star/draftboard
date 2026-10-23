@@ -80,7 +80,7 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; height: 100%; overflow: hidden; }
-body { font: 12px/1.4 var(--font); color: var(--text); background: var(--panel); user-select: none; }
+body { font: 12px/1.4 var(--font); color: var(--text); background: var(--panel); user-select: none; --chat-right: 280px; --chat-bottom: 16px; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
 input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; }
