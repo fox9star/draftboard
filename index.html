@@ -6,6 +6,7 @@
   <title>Draftboard — 설치 없이 바로 쓰는 디자인 도구</title>
   <meta name="description" content="브라우저에서 바로 열리는 로컬 디자인 도구. 디자인, 프로토타입, 슬라이드, 화이트보드, 사이트, 모션, 대량 제작과 로컬 AI 빌더까지 결제 없이 사용하세요.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script src="theme.js"></script>
   <link rel="stylesheet" href="home.css">
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -22,7 +23,10 @@
         <a href="#how">사용 방법</a>
         <a href="#faq">자주 묻는 질문</a>
       </nav>
-      <a class="btn btn-dark" href="files.html">내 파일 열기</a>
+      <div class="nav-tools">
+        <div class="compact" data-theme-switch></div>
+        <a class="btn btn-dark" href="files.html">내 파일 열기</a>
+      </div>
     </div>
   </header>
 

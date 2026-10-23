@@ -278,7 +278,8 @@
       motion: ['레이어를 선택하고 <b>모션</b> 탭에서 효과·지연·길이 지정', '타임라인에서 순서를 확인하고 동영상(WebM)으로 내보내기'],
     }[kind] || [];
     const stickyRow = kind === 'whiteboard' ? sec('새 스티커 메모 색', stickySwatches(s.stickyColor, 'default')) : '';
-    return sec('캔버스', colorRow('bg', s.doc.bg))
+    const themedBg = Ed.DEFAULT_BGS.includes(String(s.doc.bg).toUpperCase());
+    return sec('캔버스', colorRow('bg', s.doc.bg) + (themedBg ? hint('기본 색이라 화면 테마(라이트·그레이·다크)를 따릅니다. 다른 색을 고르면 그 색으로 고정됩니다.') : ''))
       + (quick ? sec(`${Ed.KINDS[kind] || ''} 도구`, `<div class="btn-col">${quick}</div>`) : '')
       + stickyRow
       + sec('도움말', `<ul class="tips">${tips.map(t => `<li>${t}</li>`).join('')}</ul><div class="btn-row">${btn('shortcuts', '단축키 전체 보기')}</div>`);

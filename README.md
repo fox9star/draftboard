@@ -3,6 +3,10 @@
 브라우저에서 바로 실행되는 로컬 디자인 도구입니다. 설치, 가입, 결제가 필요 없고 서버도 쓰지 않습니다.
 파일은 브라우저 저장소(IndexedDB)에 저장되며, AI 기능은 내 컴퓨터에서 실행되는 [Ollama](https://ollama.com) 모델을 사용합니다.
 
+**바로 써 보기:** <https://fox9star.github.io/draftboard/>
+
+화면 테마는 라이트 · 그레이 · 다크 세 가지이며, 각 화면 위쪽의 테마 스위치나 에디터 메뉴(☰)에서 바꿀 수 있습니다.
+
 ## 모듈
 
 | 모듈 | 하는 일 |
@@ -39,6 +43,15 @@ ollama pull llava             # ‘AI 이미지 설명’ 노드를 쓸 때 (비
 ```
 
 AI 빌더의 ⚙ 버튼에서 서버 주소와 문맥 길이를 바꿀 수 있습니다.
+
+GitHub Pages 주소(`https://fox9star.github.io`)에서 AI 기능을 쓰려면, Ollama가 그 주소의 요청을 받도록 설정해야 합니다.
+
+```powershell
+# Windows: 사용자 환경 변수를 설정한 뒤 Ollama를 다시 시작합니다
+[Environment]::SetEnvironmentVariable('OLLAMA_ORIGINS', 'https://fox9star.github.io', 'User')
+```
+
+macOS·Linux에서는 `OLLAMA_ORIGINS=https://fox9star.github.io`를 설정하고 Ollama를 다시 시작하세요. 브라우저가 “로컬 네트워크 접근”을 허용할지 물으면 허용해야 합니다.
 
 ## 저장과 공유
 
@@ -81,6 +94,7 @@ AI 빌더의 ⚙ 버튼에서 서버 주소와 문맥 길이를 바꿀 수 있�
 | `make.html`, `make.js` | AI 빌더 |
 | `weave.html`, `weave.js` | 미디어 플로 |
 | `ui.css` | 파일 목록·AI 빌더·미디어 플로 공통 스타일 |
+| `theme.js` | 라이트·그레이·다크 테마 전환 (모든 화면이 공유) |
 
 ## 지원하지 않는 것
 

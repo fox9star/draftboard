@@ -26,6 +26,7 @@
   };
   Ed.KINDS = { design: '디자인', whiteboard: '화이트보드', slides: '슬라이드', site: '사이트', buzz: '대량 제작', motion: '모션' };
   Ed.STICKY_COLORS = ['#FFE066', '#FFC9C9', '#B2F2BB', '#A5D8FF', '#D0BFFF', '#FFD8A8', '#E9ECEF', '#FFFFFF'];
+  Ed.DEFAULT_BGS = ['#F5F5F5', '#F4F1EA'];
   const FONT = Scene.DEFAULT_FONT;
   const DEFAULTS = {
     frame: { fill: '#FFFFFF', radius: 0 },
@@ -474,7 +475,9 @@
     let step = 20 * z;
     while (step < 12) step *= 2;
     while (step > 48) step /= 2;
-    el.stage.style.backgroundColor = s.doc.bg;
+    // An untouched default background follows the light / gray / dark theme.
+    el.stage.style.backgroundColor = Ed.DEFAULT_BGS.includes(String(s.doc.bg).toUpperCase()) ? '' : s.doc.bg;
+    el.stage.classList.toggle('board', s.doc.kind === 'whiteboard');
     el.stage.style.backgroundSize = `${step}px ${step}px`;
     el.stage.style.backgroundPosition = `${V.x}px ${V.y}px`;
 

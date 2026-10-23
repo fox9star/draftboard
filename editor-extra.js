@@ -589,9 +589,23 @@
       { label: '미디어 플로 열기', run: () => window.open('weave.html', '_blank') },
       '-',
       { label: '키보드 단축키', kbd: 'Ctrl+/', run: showShortcuts },
-      { label: '홈페이지', run: () => { location.href = 'index.html'; }, disabled: s.demo },
+      { heading: '테마' },
+      ...Theme.list.map(([k, l]) => ({ label: `${l} 모드`, checked: Theme.get() === k, run: () => Theme.set(k) })),
     ], 'menu');
   }
+
+  // The logo goes home; it saves first so nothing is lost on the way out.
+  $('#home-btn').addEventListener('click', async e => {
+    if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    e.preventDefault();
+    if (s.demo) {
+      (window.top || window).location.href = 'index.html';
+      return;
+    }
+    await Ed.saveNow();
+    await Ed.flushThumb();
+    location.href = 'index.html';
+  });
 
   function exportMenu() {
     const b = $('#export-btn').getBoundingClientRect();
