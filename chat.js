@@ -10,7 +10,7 @@
   // ---------- help topics (used for the AI's knowledge and for the offline answers) ----------
   const KB = [
     { t: 'Draftboard로 할 수 있는 것', k: ['무엇', '뭘', '뭐 할', '기능', '모듈', '할 수 있', '소개', 'draftboard', '드래프트보드'],
-      a: 'Draftboard는 브라우저에서 실행되는 로컬 디자인 도구입니다. 모듈은 10가지입니다: 디자인 & 프로토타입, 슬라이드, AI 빌더, 일러스트, 미디어 플로, 사이트, 개발 모드, 대량 제작, 모션, 화이트보드. [내 파일](files.html)의 ‘새로 만들기’에서 시작하세요.' },
+      a: 'Draftboard는 브라우저에서 실행되는 로컬 디자인 도구이고 모듈은 10가지입니다. 디자인 & 프로토타입(화면 디자인과 클릭해 넘겨 보는 시안), 슬라이드(발표 자료와 슬라이드 쇼), AI 빌더(설명을 적으면 로컬 AI가 웹 앱을 만듦), 일러스트(펜·불리언·그라디언트로 그리는 벡터 그림), 미디어 플로(이미지·동영상·오디오를 노드로 이어 처리), 사이트(반응형 웹사이트로 내보내기), 개발 모드(레이어의 CSS·HTML·React 코드 보기), 대량 제작(템플릿과 표 데이터로 이미지 일괄 생성), 모션(레이어 애니메이션과 동영상), 화이트보드(스티커 메모와 연결선으로 아이디어 정리). [내 파일](files.html)의 ‘새로 만들기’에서 시작하세요.' },
     { t: '요금', k: ['무료', '결제', '요금', '가격', '유료', '크레딧', '가입', '회원', '돈'],
       a: '무료입니다. 계정, 요금제, 크레딧이 없고 설치도 필요 없습니다.' },
     { t: '파일 저장 위치', k: ['저장', '어디에', '사라', '데이터', 'indexeddb', '자동 저장'],
@@ -27,8 +27,12 @@
       a: '이동 V, 손 도구 H(또는 Space+드래그), 프레임 F, 사각형 R, 원 O, 선 L, 화살표 Shift+L, 펜 P, 연필 Shift+P, 형광펜 M, 텍스트 T, 스티커 메모 S, 연결선 X, 스탬프 E. 그룹 Ctrl+G, 복제 Ctrl+D, 실행 취소 Ctrl+Z, 전체 단축키 보기 Ctrl+/.' },
     { t: '텍스트', k: ['텍스트', '글자', '글씨', '폰트', '글꼴', '행간', '줄 간격'],
       a: 'T를 누르고 캔버스를 클릭하면 바로 입력합니다. 끌면 고정 너비 상자가 됩니다. 텍스트를 더블클릭하거나 선택하고 Enter를 누르면 다시 편집하고, Esc로 끝냅니다. 오른쪽 디자인 탭에서 글꼴·굵기·크기·행간·정렬과 자동/고정 너비를 바꿉니다.' },
-    { t: '펜과 점 편집', k: ['펜', '곡선', '베지어', '점 편집', '패스', '벡터', '앵커'],
-      a: 'P로 펜을 고르고 클릭하면 직선 점, 끌면 곡선 점이 생깁니다. 첫 점을 누르면 닫히고, Enter·Esc나 더블클릭으로 끝냅니다. 벡터를 더블클릭하면 점 편집: 점과 핸들을 끌어 고치고, 점을 더블클릭하면 곡선·직선 전환, Delete로 점 삭제입니다. 도형은 Ctrl+E로 벡터로 바꿀 수 있습니다.' },
+    { t: '펜으로 그리기', k: ['펜', '곡선', '베지어', '패스'],
+      a: 'P로 펜을 고릅니다. 캔버스를 클릭하면 꺾인 점(직선)이, 누른 채 끌면 곡선 점과 핸들이 생깁니다. 처음 찍은 점을 다시 누르면 모양이 닫히고, Enter나 Esc를 누르거나 더블클릭하면 열린 채로 끝납니다. 그린 뒤 점을 고치려면 ‘점 편집’을 쓰세요.' },
+    { t: '점 편집', k: ['점 편집', '앵커', '핸들', ['점', '수정'], ['점', '고치'], ['벡터', '바꾸'], '벡터로'],
+      a: '다 그린 벡터를 더블클릭하면 점 편집 모드가 됩니다. 점이나 핸들을 끌어 고치고, 점을 더블클릭하면 곡선 점과 꺾인 점이 바뀌며, Delete로 점을 지웁니다. Esc나 Enter로 끝냅니다. 사각형 같은 도형은 Ctrl+E로 벡터로 바꿀 수 있습니다.' },
+    { t: '일러스트 파일', k: ['일러스트', '벡터 그림', '그림 그리', '그림을 그리'],
+      a: '일러스트는 벡터 그림을 그리기 위한 파일 종류입니다. [내 파일](files.html)의 ‘일러스트’로 만들면 펜 경로, 불리언, 그라디언트로 그린 예제 그림과 ‘펜으로 그리기’ 버튼이 함께 열립니다. 그린 그림은 내보내기에서 SVG나 PNG로 저장합니다.' },
     { t: '불리언', k: ['불리언', '합치기', '빼기', '교차', '제외', '합집합', '도형 합'],
       a: '도형을 둘 이상 선택하고 Ctrl+Alt+U(합치기), Ctrl+Alt+S(빼기), Ctrl+Alt+I(교차), Ctrl+Alt+E(제외)를 누르거나 우클릭 메뉴에서 고릅니다. 빼기는 맨 아래 도형에서 나머지를 뺍니다. 불리언을 선택하면 디자인 탭에서 연산을 바꾸거나 ‘도형으로 분리’할 수 있습니다.' },
     { t: '색, 그라디언트, 효과', k: ['색', '채우기', '그라디언트', '그라데이션', '그림자', '흐림', '블러', '테두리', '선 두께', '투명'],
@@ -47,8 +51,12 @@
       a: '에디터 오른쪽 위 **내보내기**에서 PNG, SVG, 이미지 복사, PDF(슬라이드 인쇄), JSON, 사이트 미리보기·HTML, 동영상(WebM), 애니메이션 SVG를 고릅니다. 프레임 하나를 선택하면 그 프레임 영역만 내보내고, PNG 배율은 디자인 탭 맨 아래에서 정합니다.' },
     { t: '프로토타입', k: ['프로토타입', '링크', '클릭하면', '화면 전환', '화면 연결'],
       a: '버튼 같은 레이어를 선택하고 오른쪽 **프로토타입** 탭의 ‘클릭하면’에서 이동할 프레임과 전환 효과를 고릅니다. 위쪽 ▶(Ctrl+Alt+Enter)로 재생하고, 연결이 없는 곳을 누르면 누를 수 있는 곳이 깜빡입니다.' },
-    { t: '슬라이드', k: ['슬라이드', '발표', '프레젠테이션', '피피티', 'ppt', '발표자 노트'],
-      a: '슬라이드 파일에서 슬라이드를 선택하고 **Enter**를 누르면 다음 슬라이드가 추가됩니다. 왼쪽 ‘+ 새 슬라이드’로 레이아웃을 고를 수도 있습니다. Ctrl+D로 복제, 왼쪽 목록을 끌어 순서를 바꿉니다. 슬라이드 쇼에서는 ←/→로 넘기고 N으로 발표자 노트, Esc로 끝냅니다. PDF는 내보내기 → ‘PDF (슬라이드 인쇄)’입니다.' },
+    { t: '슬라이드 추가', k: ['슬라이드', '새 슬라이드', ['슬라이드', '추가'], ['슬라이드', '만들'], ['슬라이드', '넣']],
+      a: '슬라이드 파일에서 슬라이드를 선택하고 **Enter**를 누르면 그 다음에 새 슬라이드가 추가됩니다. 아무것도 선택하지 않고 Enter를 누르면 맨 끝에 추가됩니다. 왼쪽 슬라이드 탭의 ‘+ 새 슬라이드’를 누르면 레이아웃(제목, 제목과 본문, 2단 구성 등)을 골라 추가할 수 있습니다.' },
+    { t: '슬라이드 복제와 순서', k: ['슬라이드', ['슬라이드', '복제'], ['슬라이드', '순서'], ['슬라이드', '복사'], ['슬라이드', '지우']],
+      a: '슬라이드를 선택하고 Ctrl+D를 누르면 복제본이 원본 바로 다음 순서로 추가됩니다. 왼쪽 슬라이드 탭에서 썸네일을 끌어 순서를 바꾸고, 슬라이드를 선택하고 Delete를 누르면 지웁니다.' },
+    { t: '슬라이드 쇼와 PDF', k: ['슬라이드', '슬라이드 쇼', '발표', '프레젠테이션', '발표자 노트', '피피티', 'ppt', ['슬라이드', 'pdf']],
+      a: '위쪽 ▶ 또는 왼쪽 ‘재생’으로 슬라이드 쇼를 시작합니다. → 또는 Space로 다음, ←로 이전 슬라이드로 가고, N으로 발표자 노트를 보며, Esc로 끝냅니다. 발표자 노트는 슬라이드(프레임)를 선택하고 디자인 탭 아래쪽에 적습니다. PDF는 내보내기 → ‘PDF (슬라이드 인쇄)’를 누른 뒤 인쇄 창에서 ‘PDF로 저장’을 고릅니다.' },
     { t: '화이트보드', k: ['화이트보드', '스티커', '메모', '연결선', '스탬프', '형광펜', '타이머', '브레인스토밍'],
       a: 'S를 누르고 클릭하면 스티커 메모가 생기고 바로 글자를 씁니다. X를 누르고 도형에서 도형으로 끌면 연결선이 붙어 도형을 따라옵니다. E는 스탬프, M은 형광펜이고, 오른쪽 ‘화이트보드 도구’의 타이머로 시간을 잴 수 있습니다.' },
     { t: '사이트 만들기', k: ['사이트', '웹사이트', '반응형', '페이지 이름', '중단점'],
@@ -64,7 +72,7 @@
     { t: '미디어 플로', k: ['미디어 플로', '노드', '워크플로', '프레임 추출', '파형', '오디오'],
       a: '[미디어 플로](weave.html)에서 왼쪽 목록의 노드를 추가하고, 노드 오른쪽 점(출력)에서 다른 노드의 왼쪽 점(입력)으로 끌어 연결합니다. ▶ 실행하면 결과가 노드에 보이고, ‘결과 보기·저장’ 노드에서 저장하거나 ‘Draftboard로 보내기’로 파일에 넣습니다.' },
     { t: '로컬 AI(Ollama) 설정', k: ['ollama', '올라마', 'ai 연결', '연결이 안', 'ai가 안', '모델', '로컬 ai', '권한'],
-      a: 'AI 기능은 이 PC에서 실행되는 Ollama를 씁니다. Ollama를 설치해 실행하고 터미널에서 `ollama pull qwen2.5:7b`로 모델을 받으세요. 호스팅 사이트에서 쓰려면 Ollama 설정 OLLAMA_ORIGINS에 사이트 주소를 넣고 Ollama를 다시 시작한 뒤, 브라우저가 로컬 네트워크 접근을 물으면 ‘허용’을 누르세요.' },
+      a: 'AI 기능은 이 PC에서 실행되는 Ollama를 씁니다. Ollama를 설치해 실행하고 터미널에서 `ollama pull qwen2.5:7b`로 모델을 받으세요. 로컬 서버(127.0.0.1:8080)에서는 이것으로 충분합니다. 호스팅 사이트에서 쓰려면 환경 변수 OLLAMA_ORIGINS에 사이트 주소를 넣어야 합니다. Windows에서는 PowerShell에서 `[Environment]::SetEnvironmentVariable(\'OLLAMA_ORIGINS\', \'https://fox9star.github.io\', \'User\')`를 실행하고 Ollama를 다시 시작하세요. 그다음 도우미의 ‘로컬 AI 연결’을 누르고, 브라우저가 로컬 네트워크 접근을 물으면 ‘허용’을 누르세요.' },
     { t: '실행 취소', k: ['실행 취소', '되돌', '다시 실행', '취소'],
       a: 'Ctrl+Z로 실행 취소, Ctrl+Shift+Z(또는 Ctrl+Y)로 다시 실행합니다. 에디터 위쪽의 ↶ ↷ 버튼도 있습니다.' },
     { t: '오프라인과 공동 편집', k: ['오프라인', '인터넷', '공동', '같이 편집', '협업', '공유'],
@@ -86,10 +94,15 @@
   const page = () => location.pathname.split('/').pop() || 'index.html';
 
   // ---------- offline answers ----------
+  // A key is a word, or a list of words that must all appear. Topics far below the best match are dropped.
   function search(q) {
     const t = q.toLowerCase();
-    return KB.map(e => ({ e, s: e.k.reduce((sum, k) => sum + (t.includes(k) ? k.length + 2 : 0), 0) }))
-      .filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 2).map(x => x.e);
+    const score = k => (Array.isArray(k)
+      ? (k.every(w => t.includes(w)) ? k.join('').length + 4 : 0)
+      : (t.includes(k) ? k.length + 2 : 0));
+    const hits = KB.map(e => ({ e, s: e.k.reduce((sum, k) => sum + score(k), 0) })).filter(x => x.s > 0).sort((a, b) => b.s - a.s);
+    if (!hits.length) return [];
+    return hits.filter(x => x.s >= hits[0].s * 0.6).slice(0, 2).map(x => x.e);
   }
 
   function helpAnswer(q) {
@@ -101,7 +114,8 @@
   // ---------- AI ----------
   function context() {
     const p = page();
-    let c = `사용자가 지금 보고 있는 화면: ${PAGE_NAMES[p] || '홈페이지'}`;
+    let c = `접속 주소: ${location.origin}${hosted() ? ' (호스팅 사이트)' : ' (이 PC의 로컬 서버)'}
+사용자가 지금 보고 있는 화면: ${PAGE_NAMES[p] || '홈페이지'}`;
     const Ed = window.Ed;
     if (Ed && Ed.s && Ed.s.doc) {
       const sel = Ed.selNodes ? Ed.selNodes() : [];
@@ -116,15 +130,23 @@
     return `당신은 Draftboard의 도우미입니다. Draftboard는 브라우저에서 실행되는 무료 로컬 디자인 도구입니다.
 규칙:
 - 한국어로 짧고 정확하게 답하세요. 단계가 있으면 번호 목록으로 쓰세요.
+- 답은 한국어로만 쓰고 다른 나라 말 단어를 섞지 마세요. 영어는 도움말에 나온 키 이름(Ctrl, Shift, Enter 등)과 파일 형식 이름(PNG, SVG 등)만 씁니다.
 - 아래 도움말에 있는 기능만 설명하고, 없는 기능은 지어내지 마세요. 모르면 모른다고 말하고 가장 가까운 기능을 안내하세요.
+- 질문에 ‘참고할 도움말’이 붙어 있으면 그 내용을 빠짐없이 전달하되 순서와 표현을 크게 바꾸지 말고, 도움말에 없는 단계·옵션·메뉴 이름은 덧붙이지 마세요.
+- 명령어, 주소, 코드는 도움말에 적힌 그대로 쓰고 바꾸거나 지어내지 마세요. 설정 파일을 지어내지 마세요.
 - 단축키와 버튼 이름은 도움말에 적힌 그대로 쓰세요.
 - 다른 화면으로 안내할 때는 [이름](주소) 형식의 링크를 쓰세요. 쓸 수 있는 주소: files.html, make.html, weave.html, index.html
 - Draftboard와 관계없는 질문에는 한두 문장으로 답하고 Draftboard 이야기로 돌아오세요.
 ${context()}
 
+Draftboard 모듈: 디자인 & 프로토타입, 슬라이드, AI 빌더, 일러스트, 미디어 플로, 사이트, 개발 모드, 대량 제작, 모션, 화이트보드
+
 도움말:
 ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
   }
+
+  // Chinese and Japanese script; Korean answers never need it
+  const FOREIGN = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
 
   const hosted = () => !!(window.LocalAI && LocalAI.hosted && LocalAI.hosted());
   let ai = { state: 'unknown', model: '' };
@@ -214,6 +236,9 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
 .dbchat-msg.user{align-self:flex-end;background:var(--c-accent);color:#fff;border-bottom-right-radius:4px;white-space:pre-wrap}
 .dbchat-msg.bot{align-self:flex-start;background:var(--c-soft);border-bottom-left-radius:4px}
 .dbchat-msg.bot .src{display:block;margin-top:6px;color:var(--c-muted);font-size:11px}
+.dbchat-msg.bot .refs{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:8px;color:var(--c-muted);font-size:11px}
+.dbchat-msg.bot .refs button{border:1px solid var(--c-line);background:var(--c-bg);color:var(--c-fg);border-radius:10px;padding:1px 8px;font:inherit;font-size:11px;cursor:pointer}
+.dbchat-msg.bot .refs button:hover{border-color:var(--c-accent)}
 .dbchat-typing{display:inline-flex;gap:3px}.dbchat-typing span{width:6px;height:6px;border-radius:50%;background:var(--c-muted);animation:dbchat-dot 1s infinite}
 .dbchat-typing span:nth-child(2){animation-delay:.15s}.dbchat-typing span:nth-child(3){animation-delay:.3s}
 @keyframes dbchat-dot{0%,100%{opacity:.25}50%{opacity:1}}
@@ -247,7 +272,9 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
   function bubble(m) {
     if (m.role === 'user') return `<div class="dbchat-msg user">${esc(m.content)}</div>`;
     const body = m.content ? md(m.content) : '<span class="dbchat-typing"><span></span><span></span><span></span></span>';
-    return `<div class="dbchat-msg bot">${body}${m.src === 'help' ? '<span class="src">도움말에서 찾은 답입니다</span>' : ''}</div>`;
+    const refs = m.refs && m.refs.length && m.content
+      ? `<span class="refs">관련 도움말: ${m.refs.map(t => `<button type="button" data-topic="${esc(t)}">${esc(t)}</button>`).join('')}</span>` : '';
+    return `<div class="dbchat-msg bot">${body}${m.src === 'help' ? '<span class="src">도움말에서 찾은 답입니다</span>' : ''}${refs}</div>`;
   }
 
   function renderLog() {
@@ -274,21 +301,27 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
     busy = true;
     sendBtn.disabled = true;
     const useAI = ai.state === 'on' || (ai.state === 'unknown' && !hosted() && await connect());
+    let refs = [];
     if (useAI) {
+      refs = search(text);
       const msgs = [{ role: 'system', content: systemPrompt() }];
-      for (const m of history.slice(-9, -1)) msgs.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
+      for (const m of history.slice(-10, -2)) msgs.push({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content });
+      // The most relevant help topics go right next to the question
+      msgs.push({ role: 'user', content: refs.length ? `${text}\n\n(참고할 도움말)\n${refs.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}` : text });
       abort = new AbortController();
+      let drifted = false;
       try {
         await LocalAI.chat({
-          model: ai.model, messages: msgs, signal: abort.signal, options: { temperature: 0.3 },
+          model: ai.model, messages: msgs, signal: abort.signal, options: { temperature: 0.1 },
           onToken: (piece, full) => {
             reply.content = full;
+            // Small local models sometimes drift into Chinese or Japanese; stop there.
+            if (FOREIGN.test(piece)) { drifted = true; abort.abort(); return; }
             const last = log.lastElementChild;
             if (last) last.outerHTML = bubble(reply);
             log.scrollTop = log.scrollHeight;
           },
         });
-        reply.src = 'ai';
       } catch (e) {
         if (e.name !== 'AbortError') {
           ai.state = 'off';
@@ -297,6 +330,18 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
           const h = helpAnswer(text);
           reply.content = h.text;
           reply.src = 'help';
+        } else if (!drifted) reply.content = '';
+      }
+      if (reply.src !== 'help' && reply.content) {
+        // Drop any line with foreign script; if little is left, give the help text instead.
+        const clean = reply.content.split('\n').filter(l => !FOREIGN.test(l)).join('\n').trim();
+        if (FOREIGN.test(reply.content) && clean.length < 30) {
+          reply.content = helpAnswer(text).text;
+          reply.src = 'help';
+        } else {
+          reply.content = clean;
+          reply.src = 'ai';
+          reply.refs = refs.map(e => e.t);
         }
       }
       abort = null;
@@ -373,6 +418,15 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
       }
     });
     chips.addEventListener('click', e => { const b = e.target.closest('button'); if (b) send(b.textContent); });
+    log.addEventListener('click', e => {
+      const b = e.target.closest('[data-topic]');
+      const topic = b && KB.find(x => x.t === b.dataset.topic);
+      if (!topic || busy) return;
+      history.push({ role: 'bot', content: `**${topic.t}**
+${topic.a}`, src: 'help' });
+      saveHistory();
+      renderLog();
+    });
     root.querySelector('form').addEventListener('submit', e => {
       e.preventDefault();
       const t = input.value;
