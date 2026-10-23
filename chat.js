@@ -217,7 +217,7 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
 .dbchat-fab:hover{transform:translateY(-2px)}
 .dbchat-fab:focus-visible{outline:3px solid #7B61FF;outline-offset:3px}
 .dbchat-panel{position:absolute;right:0;bottom:64px;width:370px;height:min(560px,calc(100vh - 110px));display:flex;flex-direction:column;background:var(--c-bg);border:1px solid var(--c-line);border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.25);overflow:hidden}
-.dbchat-head{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 14px;border-bottom:1px solid var(--c-line)}
+.dbchat-head{display:flex;align-items:center;gap:8px;padding:12px 12px 10px 14px;border-bottom:1px solid var(--c-line);user-select:none}
 .dbchat-title{font-weight:800;font-size:14px}
 .dbchat-status{display:flex;align-items:center;gap:5px;color:var(--c-muted);font-size:11px;margin-right:auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dbchat-status em{font-style:normal;overflow:hidden;text-overflow:ellipsis}
@@ -250,15 +250,24 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
 .dbchat-form textarea:focus{border-color:var(--c-accent)}
 .dbchat-send{width:38px;height:38px;border:0;border-radius:10px;background:var(--c-accent);color:#fff;cursor:pointer;display:grid;place-items:center;flex:none}
 .dbchat-send:disabled{opacity:.5;cursor:default}
-@media (max-width:520px){.dbchat-panel{position:fixed;inset:8px 8px 76px 8px;width:auto;height:auto}}
+.dbchat-backdrop{display:none;position:fixed;inset:0;background:rgba(10,10,14,.45)}
+.dbchat.max.open .dbchat-backdrop{display:block}
+.dbchat.max.open .dbchat-fab{visibility:hidden}
+.dbchat.max .dbchat-panel{position:fixed;inset:24px;width:auto;height:auto;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.dbchat.max .dbchat-log,.dbchat.max .dbchat-chips,.dbchat.max .dbchat-form{padding-left:max(14px,calc((100% - 780px) / 2));padding-right:max(14px,calc((100% - 780px) / 2))}
+.dbchat.max .dbchat-msg{font-size:14px}
+@media (max-width:520px){.dbchat-panel{position:fixed;inset:8px 8px 76px 8px;width:auto;height:auto}.dbchat.max .dbchat-panel{inset:0;border-radius:0;border:0}}
 @media print{.dbchat{display:none!important}}`;
 
   const ICON_CHAT = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/></svg>';
   const ICON_CLOSE = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>';
   const ICON_TRASH = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9"/></svg>';
   const ICON_SEND = '<svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M2 2.5l12 5.5-12 5.5 1.8-5.5z"/></svg>';
+  const ICON_MAX = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5h4v4M13.5 2.5L9 7M6.5 13.5h-4v-4M2.5 13.5L7 9"/></svg>';
+  const ICON_RESTORE = '<svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v4h4M9 7l4.5-4.5M7 13V9H3M7 9l-4.5 4.5"/></svg>';
+  const MAX_KEY = 'draftboard.chat.max';
 
-  let root, panel, log, input, sendBtn, chips, statusEl, connectBtn, busy = false, abort = null;
+  let root, panel, log, input, sendBtn, chips, statusEl, connectBtn, maxBtn, busy = false, abort = null;
 
   function renderStatus() {
     if (!statusEl) return;
@@ -360,8 +369,22 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
     if (reply.src === 'help' && /찾지 못했습니다/.test(reply.content)) renderChips(true);
   }
 
+  // the maximized size is remembered, so the helper opens the same way on every page
+  function setMax(on, remember = true) {
+    root.classList.toggle('max', on);
+    const label = on ? '작게 보기' : '크게 보기';
+    maxBtn.innerHTML = on ? ICON_RESTORE : ICON_MAX;
+    maxBtn.title = label;
+    maxBtn.setAttribute('aria-label', label);
+    if (remember) {
+      try { if (on) localStorage.setItem(MAX_KEY, '1'); else localStorage.removeItem(MAX_KEY); } catch (e) { /* not remembered */ }
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
   function open() {
     panel.hidden = false;
+    root.classList.add('open');
     root.querySelector('.dbchat-fab').setAttribute('aria-expanded', 'true');
     let remembered = false;
     try { remembered = localStorage.getItem(AI_KEY) === 'on'; } catch (e) { /* not remembered */ }
@@ -373,6 +396,7 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
 
   function close() {
     panel.hidden = true;
+    root.classList.remove('open');
     root.querySelector('.dbchat-fab').setAttribute('aria-expanded', 'false');
     if (abort) abort.abort();
   }
@@ -383,10 +407,12 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
     document.head.appendChild(style);
     root = document.createElement('div');
     root.className = 'dbchat';
-    root.innerHTML = `<section class="dbchat-panel" role="dialog" aria-label="Draftboard 도우미" hidden>
+    root.innerHTML = `<div class="dbchat-backdrop"></div>
+      <section class="dbchat-panel" role="dialog" aria-label="Draftboard 도우미" hidden>
         <header class="dbchat-head"><span class="dbchat-title">도우미</span><span class="dbchat-status"><i></i><em></em></span>
           <button type="button" class="dbchat-connect" hidden>로컬 AI 연결</button>
           <button type="button" class="dbchat-icon" data-act="clear" title="대화 지우기" aria-label="대화 지우기">${ICON_TRASH}</button>
+          <button type="button" class="dbchat-icon" data-act="max"></button>
           <button type="button" class="dbchat-icon" data-act="close" title="닫기 (Esc)" aria-label="닫기">${ICON_CLOSE}</button></header>
         <div class="dbchat-log" aria-live="polite"></div>
         <div class="dbchat-chips"></div>
@@ -401,12 +427,21 @@ ${KB.map(e => `## ${e.t}\n${e.a}`).join('\n\n')}`;
     chips = root.querySelector('.dbchat-chips');
     statusEl = root.querySelector('.dbchat-status');
     connectBtn = root.querySelector('.dbchat-connect');
+    maxBtn = root.querySelector('[data-act="max"]');
+    let maxed = false;
+    try { maxed = localStorage.getItem(MAX_KEY) === '1'; } catch (e) { /* not remembered */ }
+    setMax(maxed, false);
 
     root.querySelector('.dbchat-fab').addEventListener('click', () => (panel.hidden ? open() : close()));
+    root.querySelector('.dbchat-backdrop').addEventListener('click', close);
     root.addEventListener('click', e => {
       const b = e.target.closest('[data-act]');
       if (b && b.dataset.act === 'close') close();
+      if (b && b.dataset.act === 'max') setMax(!root.classList.contains('max'));
       if (b && b.dataset.act === 'clear') { if (abort) abort.abort(); history = []; saveHistory(); renderLog(); }
+    });
+    root.querySelector('.dbchat-head').addEventListener('dblclick', e => {
+      if (!e.target.closest('button')) setMax(!root.classList.contains('max'));
     });
     connectBtn.addEventListener('click', async () => {
       const ok = await connect();
@@ -443,7 +478,11 @@ ${topic.a}`, src: 'help' });
       input.style.height = 'auto';
       input.style.height = Math.min(120, input.scrollHeight) + 'px';
     });
-    panel.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    // keys pressed inside the helper (on its buttons too) must not reach page shortcuts such as the editor's
+    panel.addEventListener('keydown', e => {
+      e.stopPropagation();
+      if (e.key === 'Escape') close();
+    });
     renderStatus();
   }
 
