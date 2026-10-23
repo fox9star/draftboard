@@ -24,7 +24,7 @@
     frame: '프레임', rect: '사각형', ellipse: '원', polygon: '다각형', star: '별', line: '선', path: '그리기',
     vector: '벡터', text: '텍스트', image: '이미지', sticky: '스티커 메모', connector: '연결선', group: '그룹', boolean: '불리언',
   };
-  Ed.KINDS = { design: '디자인', whiteboard: '화이트보드', slides: '슬라이드', site: '사이트', buzz: '대량 제작', motion: '모션' };
+  Ed.KINDS = { design: '디자인', illustration: '일러스트', whiteboard: '화이트보드', slides: '슬라이드', site: '사이트', buzz: '대량 제작', motion: '모션' };
   Ed.STICKY_COLORS = ['#FFE066', '#FFC9C9', '#B2F2BB', '#A5D8FF', '#D0BFFF', '#FFD8A8', '#E9ECEF', '#FFFFFF'];
   Ed.DEFAULT_BGS = ['#F5F5F5', '#F4F1EA'];
   const FONT = Scene.DEFAULT_FONT;

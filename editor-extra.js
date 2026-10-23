@@ -569,7 +569,7 @@
   }
 
   // ---------- menus ----------
-  const NEW_KINDS = [['design', '디자인 파일'], ['whiteboard', '화이트보드'], ['slides', '슬라이드'], ['site', '사이트'], ['buzz', '대량 제작'], ['motion', '모션']];
+  const NEW_KINDS = [['design', '디자인 파일'], ['illustration', '일러스트'], ['whiteboard', '화이트보드'], ['slides', '슬라이드'], ['site', '사이트'], ['buzz', '대량 제작'], ['motion', '모션']];
 
   function mainMenu() {
     const b = $('#menu-btn').getBoundingClientRect();
@@ -671,6 +671,7 @@
     sitePreview, siteExport, buzz: openBuzz, addSlide: () => addSlide('titleBody'), printSlides,
     timer: timerMenu, shortcuts: showShortcuts,
     editVector: () => { const n = Ed.selNodes()[0]; if (n && n.type === 'vector') Ed.enterVectorEdit(n); },
+    toolPen: () => Ed.setTool('pen'),
     setStart: () => {
       const n = Ed.selNodes()[0];
       if (!n || n.type !== 'frame') return;
@@ -690,10 +691,48 @@
   // ---------- starter documents ----------
   const grad = (type, a, b, angle = 135) => ({ type, angle, stops: [{ c: a, p: 0 }, { c: b, p: 1 }] });
 
-  function starter(kind) {
+  function starter(kind, sample) {
     const d = Ed.blankDoc(kind);
     const add = (type, props) => { const n = Ed.makeNode(type, props, d); d.nodes.push(n); return n; };
-    if (kind === 'slides') {
+    if (kind === 'design' && sample === 'ui') {
+      // A small screen to look at in the code tab
+      d.name = '개발 모드 예제';
+      add('frame', { x: 0, y: 0, w: 390, h: 844, name: '로그인 화면' });
+      add('ellipse', { x: 32, y: 64, w: 48, h: 48, name: '로고', fill: grad('radial', '#7B61FF', '#2EC4B6') });
+      add('text', { x: 32, y: 140, w: 326, textMode: 'fixed', text: '다시 만나서 반가워요', fontSize: 28, fontWeight: 800, fill: '#1E1E1E', name: '제목' });
+      add('text', { x: 32, y: 186, w: 326, textMode: 'fixed', text: '계정에 로그인하세요', fontSize: 16, fill: '#6B6B75', name: '부제목' });
+      const field = (y, label, name) => add('rect', {
+        x: 32, y, w: 326, h: 52, radius: 12, fill: '#F4F4F6', stroke: '#E2E2E8', strokeWidth: 1,
+        label, labelColor: '#9A9AA5', labelAlign: 'left', labelSize: 15, name,
+      });
+      field(250, 'name@example.com', '이메일 입력');
+      field(318, '비밀번호', '비밀번호 입력');
+      add('rect', {
+        x: 32, y: 402, w: 326, h: 54, radius: 14, fill: '#0D8BFF', label: '로그인', labelColor: '#FFFFFF', labelSize: 17, labelWeight: 700,
+        name: '로그인 버튼', effects: { shadow: { x: 0, y: 6, blur: 16, color: '#0D8BFF', opacity: 0.3 }, blur: 0 },
+      });
+      add('text', { x: 32, y: 480, w: 326, textMode: 'fixed', align: 'center', text: '비밀번호를 잊으셨나요?', fontSize: 14, fill: '#0D8BFF', name: '도움 링크' });
+    } else if (kind === 'illustration') {
+      // Dusk scene built with pen paths, booleans and gradients
+      const A = (x, y, ix = null, iy = null, ox = null, oy = null) => ({ x, y, ix, iy, ox, oy });
+      add('frame', { x: 0, y: 0, w: 1200, h: 800, name: '해 질 녘', fill: grad('linear', '#1F2A5C', '#F49B7A', 180) });
+      add('ellipse', { x: 760, y: 420, w: 220, h: 220, name: '해', fill: grad('radial', '#FFE9A8', '#FF9F43'), effects: { shadow: { x: 0, y: 0, blur: 80, color: '#FFB347', opacity: 0.7 }, blur: 0 } });
+      add('vector', {
+        name: '먼 산', closed: true, stroke: null, fill: grad('linear', '#5B4B86', '#2E2A4F', 180),
+        anchors: [A(0, 560), A(180, 430), A(330, 520), A(520, 380), A(700, 520), A(880, 440), A(1200, 560), A(1200, 800), A(0, 800)],
+      });
+      add('vector', {
+        name: '가까운 언덕', closed: true, stroke: null, fill: grad('linear', '#2E2A4F', '#15132A', 180),
+        anchors: [A(0, 660, null, null, 200, 600), A(420, 650, 300, 610, 540, 690), A(800, 630, 680, 590, 920, 670), A(1200, 640, 1080, 610), A(1200, 800), A(0, 800)],
+      });
+      const puff = (x, y, w, h) => Ed.makeNode('ellipse', { x, y, w, h, fill: '#FFFFFF' }, d);
+      add('boolean', { name: '구름', op: 'union', fill: '#FFFFFF', opacity: 0.85, children: [puff(160, 170, 170, 90), puff(230, 130, 150, 120), puff(320, 175, 160, 85)] });
+      const disc = (x, y) => Ed.makeNode('ellipse', { x, y, w: 96, h: 96, fill: '#FFF4C2' }, d);
+      add('boolean', { name: '초승달', op: 'subtract', fill: '#FFF4C2', children: [disc(980, 80), disc(1008, 64)] });
+      [[120, 70, 22], [420, 60, 16], [610, 120, 20], [860, 50, 14], [1120, 230, 18]]
+        .forEach(([x, y, size]) => add('star', { x, y, w: size, h: size, fill: '#FFF6D5', name: '별' }));
+      add('text', { x: 40, y: 744, text: '펜 · 불리언 · 그라디언트로 그린 예제', fontSize: 18, fill: '#FFFFFF', opacity: 0.8, name: '설명' });
+    } else if (kind === 'slides') {
       const f = add('frame', { x: 0, y: 0, w: 1920, h: 1080, name: '슬라이드 1', transition: 'dissolve' });
       d.nodes.push(...slideNodes('title', 0, 0, 1920, 1080, d));
       d.slideOrder = [f.id];
@@ -763,7 +802,7 @@
         }
       } else if (params.get('new')) {
         const kind = Ed.KINDS[params.get('new')] ? params.get('new') : 'design';
-        await Ed.createFile(kind, starter(kind));
+        await Ed.createFile(kind, starter(kind, params.get('sample')));
       } else {
         location.replace('files.html');
         return;
@@ -775,6 +814,13 @@
     document.body.classList.toggle('demo', s.demo);
     if (s.doc.kind === 'slides') s.leftTab = 'slides';
     if (s.doc.kind === 'motion') s.rightTab = 'motion';
+    // ?panel=code opens straight into the code tab (dev mode) with something selected
+    const panel = params.get('panel');
+    if (['design', 'proto', 'motion', 'code'].includes(panel)) s.rightTab = panel;
+    if (s.rightTab === 'code' && !s.selection.length) {
+      const pick = (params.get('sample') === 'ui' && s.doc.nodes.find(n => n.name === '로그인 버튼')) || Ed.topFrames()[0] || s.doc.nodes[0];
+      if (pick) s.selection = [pick.id];
+    }
     Ed.setTool('select');
     Ed.render();
     Ed.zoomFit(null, 1);

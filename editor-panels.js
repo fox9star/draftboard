@@ -266,6 +266,7 @@
       site: btn('sitePreview', '사이트 미리보기', 'primary') + btn('siteExport', 'HTML 내보내기'),
       buzz: btn('buzz', '대량 제작 열기', 'primary'),
       motion: btn('motionPlay', `${I.play} 애니메이션 재생`, 'primary') + btn('exportVideo', '동영상 내보내기'),
+      illustration: btn('toolPen', `${I.pen} 펜으로 그리기`, 'primary') + btn('exportSVG', 'SVG로 내보내기'),
       whiteboard: btn('timer', `${I.timer} 타이머`) + btn('present', `${I.play} 프레젠테이션`),
       design: btn('present', `${I.play} 프로토타입 재생`, 'primary') + btn('sitePreview', '사이트로 미리보기'),
     }[kind] || '';
@@ -276,6 +277,7 @@
       site: ['프레임을 선택하고 디자인 탭 <b>사이트</b>에서 페이지 이름과 화면 크기 지정', '같은 페이지 이름의 데스크톱·태블릿·모바일 프레임이 반응형으로 묶입니다', '프로토타입 탭의 링크가 사이트 메뉴 링크가 됩니다'],
       buzz: ['템플릿 프레임의 텍스트·이미지 레이어 이름을 CSV 열 이름과 같게 맞추세요', '<b>대량 제작</b>에서 데이터를 붙여 넣고 한 번에 생성'],
       motion: ['레이어를 선택하고 <b>모션</b> 탭에서 효과·지연·길이 지정', '타임라인에서 순서를 확인하고 동영상(WebM)으로 내보내기'],
+      illustration: ['<kbd>P</kbd> 펜: 클릭하면 직선, 끌면 곡선, 첫 점을 누르면 닫힙니다', '벡터를 더블클릭하면 점 편집, 점을 더블클릭하면 곡선·직선 전환', '도형을 둘 이상 선택하고 <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>U</kbd>·<kbd>S</kbd>·<kbd>I</kbd>·<kbd>E</kbd>로 불리언', '채우기에서 선형·원형 그라디언트, 효과에서 그림자·흐림'],
     }[kind] || [];
     const stickyRow = kind === 'whiteboard' ? sec('새 스티커 메모 색', stickySwatches(s.stickyColor, 'default')) : '';
     const themedBg = Ed.DEFAULT_BGS.includes(String(s.doc.bg).toUpperCase());

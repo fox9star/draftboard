@@ -7,6 +7,7 @@
 
   const KINDS = {
     design: { label: '디자인', color: '#7B61FF', desc: '화면 디자인과 클릭해서 넘기는 프로토타입', icon: ic('<path d="M7 3v18M17 3v18M3 7h18M3 17h18"/>') },
+    illustration: { label: '일러스트', color: '#1098AD', desc: '펜·점 편집·불리언·그라디언트로 그리는 벡터 그림', icon: ic('<path d="M12 3l6 9-6 9-6-9z"/><circle cx="12" cy="12" r="2"/>') },
     whiteboard: { label: '화이트보드', color: '#F59F00', desc: '스티커 메모·연결선·스탬프로 아이디어 정리', icon: ic('<path d="M4 4h16v11l-5 5H4z"/><path d="M20 15h-5v5"/>') },
     slides: { label: '슬라이드', color: '#E8590C', desc: '발표 자료와 슬라이드 쇼, PDF 내보내기', icon: ic('<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20h8"/>') },
     site: { label: '사이트', color: '#1C7ED6', desc: '데스크톱·모바일 반응형 웹사이트로 내보내기', icon: ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>') },
@@ -14,8 +15,8 @@
     motion: { label: '모션', color: '#2B8A3E', desc: '레이어 애니메이션과 동영상(WebM) 내보내기', icon: ic('<path d="M5 12c3-8 6-8 9 0s6 8 9 0"/><circle cx="5" cy="12" r="1.5"/>') },
   };
   const TOOLS = [
-    { href: 'make.html', label: 'AI 빌더', color: '#0CA678', desc: '이 컴퓨터의 AI 모델로 프롬프트에서 웹 앱 만들기', icon: ic('<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>') },
-    { href: 'weave.html', label: '미디어 플로', color: '#5F3DC4', desc: '이미지·동영상·오디오를 노드로 연결해 처리', icon: ic('<circle cx="5" cy="7" r="2.5"/><circle cx="5" cy="17" r="2.5"/><circle cx="19" cy="12" r="2.5"/><path d="M7.5 7c5 0 5 5 9 5M7.5 17c5 0 5-5 9-5"/>') },
+    { id: 'make', href: 'make.html', label: 'AI 빌더', color: '#0CA678', desc: '이 컴퓨터의 AI 모델로 프롬프트에서 웹 앱 만들기', icon: ic('<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/>') },
+    { id: 'weave', href: 'weave.html', label: '미디어 플로', color: '#5F3DC4', desc: '이미지·동영상·오디오를 노드로 연결해 처리', icon: ic('<circle cx="5" cy="7" r="2.5"/><circle cx="5" cy="17" r="2.5"/><circle cx="19" cy="12" r="2.5"/><path d="M7.5 7c5 0 5 5 9 5M7.5 17c5 0 5-5 9-5"/>') },
   ];
 
   let files = [], filter = 'all', query = '';
@@ -37,11 +38,45 @@
     return new Date(ts).toLocaleDateString('ko-KR');
   }
 
+  // Same ten entries, in the same order, as the home page
+  const DEV = { label: '개발 모드', color: '#2F9E44', desc: '레이어의 속성과 CSS·HTML·React·Tailwind·SVG 코드 보기', icon: ic('<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 5l-3 14"/>') };
+  const NEW_ITEMS = [['kind', 'design', '디자인 & 프로토타입'], ['kind', 'slides'], ['tool', 'make'], ['kind', 'illustration'], ['tool', 'weave'],
+    ['kind', 'site'], ['dev'], ['kind', 'buzz'], ['kind', 'motion'], ['kind', 'whiteboard']];
+
+  const card = (tag, attrs, v, title) =>
+    `<${tag} class="new-card" ${attrs}><span class="tile" style="background:${v.color}">${v.icon}</span><div><b>${esc(title || v.label)}</b><span>${esc(v.desc)}</span></div></${tag}>`;
+
   function renderNew() {
-    $('#new-grid').innerHTML = Object.entries(KINDS).map(([k, v]) =>
-      `<a class="new-card" href="editor.html?new=${k}"><span class="tile" style="background:${v.color}">${v.icon}</span><div><b>${v.label}</b><span>${v.desc}</span></div></a>`).join('')
-      + TOOLS.map(t => `<a class="new-card" href="${t.href}"><span class="tile" style="background:${t.color}">${t.icon}</span><div><b>${t.label}</b><span>${t.desc}</span></div></a>`).join('');
+    $('#new-grid').innerHTML = NEW_ITEMS.map(([type, key, title]) => {
+      if (type === 'kind') return card('a', `href="editor.html?new=${key}"`, KINDS[key], title);
+      if (type === 'tool') { const t = TOOLS.find(x => x.id === key); return card('a', `href="${t.href}"`, t); }
+      return card('button', 'type="button" id="dev-card"', DEV);
+    }).join('');
   }
+
+  // Dev mode is a tab of the editor, so the card opens an existing file (or an example) in it.
+  function devModeDialog() {
+    const root = document.createElement('div');
+    root.className = 'modal';
+    root.innerHTML = `<div class="modal-box" role="dialog" aria-label="개발 모드"><div class="modal-head"><span>개발 모드로 열기</span><button class="icon-btn" data-dev="close" aria-label="닫기">✕</button></div>
+      <div class="modal-body">
+        <p class="hint" style="margin-top:0">파일을 고르면 오른쪽 <b>코드</b> 탭이 열린 상태로 열립니다. 레이어를 선택하면 속성과 CSS · HTML · React · Tailwind · SVG 코드가 표시됩니다.</p>
+        <div class="pick-list" style="margin:12px 0">${files.length
+          ? files.slice(0, 60).map(f => `<button data-dev-file="${f.id}"><b>${esc(f.name)}</b><span class="muted">${esc((KINDS[f.kind] || KINDS.design).label)} · ${ago(f.updatedAt)}</span></button>`).join('')
+          : '<p class="hint">아직 파일이 없습니다. 예제 화면으로 시작해 보세요.</p>'}</div>
+        <div style="display:flex;justify-content:flex-end"><a class="btn primary" href="editor.html?new=design&sample=ui&panel=code">예제 화면으로 열기</a></div>
+      </div></div>`;
+    document.body.appendChild(root);
+    const onKey = e => { if (e.key === 'Escape') close(); };
+    const close = () => { root.remove(); document.removeEventListener('keydown', onKey); };
+    document.addEventListener('keydown', onKey);
+    root.addEventListener('click', e => {
+      if (e.target === root || e.target.closest('[data-dev="close"]')) return close();
+      const b = e.target.closest('[data-dev-file]');
+      if (b) location.href = `editor.html?file=${b.dataset.devFile}&panel=code`;
+    });
+  }
+  $('#new-grid').addEventListener('click', e => { if (e.target.closest('#dev-card')) devModeDialog(); });
 
   function renderFilters() {
     const counts = { all: files.length };
