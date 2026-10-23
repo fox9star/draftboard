@@ -77,13 +77,19 @@ window.LocalAI = (() => {
     return full;
   }
 
+  // Served from a public https address (e.g. GitHub Pages) rather than this computer
+  const hosted = () => location.protocol === 'https:' && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+
   function explain(err) {
     const m = String(err && err.message || err);
     if (/Failed to fetch|NetworkError|Load failed/i.test(m)) {
+      if (hosted()) {
+        return `로컬 AI 서버(${base()})에 연결할 수 없습니다. Ollama가 실행 중인지 확인하고, 브라우저가 로컬 네트워크 접근을 물으면 ‘허용’을 누르세요. 이미 차단했다면 주소창 왼쪽 아이콘 → 사이트 설정에서 로컬 네트워크 접근을 허용하세요. Ollama 설정 OLLAMA_ORIGINS에 ${location.origin} 이 있어야 합니다.`;
+      }
       return `로컬 AI 서버(${base()})에 연결할 수 없습니다. Ollama가 실행 중인지 확인하세요. 파일을 직접 열었다면 로컬 서버(http://127.0.0.1:8080)로 접속해야 합니다.`;
     }
     return m;
   }
 
-  return { cfg, save, models, pickModel, hasVision, chat, explain };
+  return { cfg, save, models, pickModel, hasVision, chat, explain, hosted };
 })();

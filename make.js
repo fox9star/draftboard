@@ -122,7 +122,10 @@
       <ol>
         <li><a href="https://ollama.com" target="_blank" rel="noopener">Ollama</a>를 설치하고 실행합니다.</li>
         <li>터미널에서 <code>ollama pull qwen2.5:7b</code>로 모델을 받습니다. (코드 품질을 높이려면 <code>qwen2.5-coder:7b</code>)</li>
-        <li>이 페이지를 로컬 서버(예: <code>http://127.0.0.1:8080/make.html</code>)로 열고 새로고침합니다.</li>
+        ${LocalAI.hosted()
+          ? `<li>Ollama 설정 <code>OLLAMA_ORIGINS</code>에 <code>${esc(location.origin)}</code>을 넣고 Ollama를 다시 시작합니다.</li>
+        <li>새로고침한 뒤 브라우저가 로컬 네트워크 접근을 물으면 ‘허용’을 누릅니다. 이미 차단했다면 주소창 왼쪽 아이콘 → 사이트 설정에서 허용합니다.</li>`
+          : '<li>이 페이지를 로컬 서버(예: <code>http://127.0.0.1:8080/make.html</code>)로 열고 새로고침합니다.</li>'}
       </ol></div>`;
     empty.hidden = false;
   }
